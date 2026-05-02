@@ -1,1 +1,272 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zombie Algebra Hunter - Ibu Ai Srimulyani</title>
+    <style>
+        body { margin: 0; font-family: 'Arial', sans-serif; background: #1a1a1a; color: white; overflow: hidden; touch-action: manipulation; }
+        #game-container { position: relative; width: 100vw; height: 100vh; background: linear-gradient(to bottom, #2c3e50, #000000); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        
+        /* Layar Menu */
+        .screen { position: absolute; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.9); z-index: 10; text-align: center; padding: 20px; box-sizing: border-box; }
+        .hidden { display: none !important; }
+        
+        button { padding: 15px 30px; font-size: 18px; margin: 10px; cursor: pointer; border-radius: 10px; border: none; background: #27ae60; color: white; font-weight: bold; }
+        input { padding: 12px; font-size: 16px; border-radius: 5px; border: none; margin-bottom: 10px; width: 80%; max-width: 300px; }
 
+        /* Arena Game */
+        #arena { width: 100%; height: 60%; position: relative; overflow: hidden; border-bottom: 5px solid #555; background: rgba(255,255,255,0.05); }
+        .zombie { position: absolute; width: 60px; height: 80px; background: #4a7c44; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 40px; transition: left 0.2s linear; bottom: 20px; }
+        .player { position: absolute; right: 20px; bottom: 20px; font-size: 50px; }
+
+        /* Pertanyaan */
+        #question-box { width: 100%; padding: 20px; background: #333; text-align: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: center; box-sizing: border-box; }
+        .options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .option-btn { background: #2980b9; padding: 15px; border-radius: 8px; font-size: 16px; border: none; color: white; }
+
+        #stats { position: absolute; top: 10px; width: 95%; display: flex; justify-content: space-between; font-weight: bold; font-size: 14px; z-index: 5; }
+        .heart { color: #e74c3c; font-size: 20px; }
+    </style>
+</head>
+<body>
+
+    <!-- Menu Utama -->
+    <div id="menu-screen" class="screen">
+        <h1>🧟 ZOMBIE ALGEBRA HUNTER</h1>
+        <p>SMP AL-FALAH SUKABUMI</p>
+        <input type="text" id="player-name" placeholder="Masukkan Nama Lengkap...">
+        <button onclick="startSinglePlayer()">Main Sendiri (Single Player)</button>
+        <button onclick="startBattle()">Battle 2 Orang (Lomba)</button>
+        <button onclick="showTeacherPanel()" style="background: #e67e22;">Panel Guru</button>
+    </div>
+
+    <!-- Layar Battle -->
+    <div id="battle-info" class="screen hidden">
+        <h2>Mode Battle</h2>
+        <p>Gunakan satu HP bergantian atau bandingkan skor akhir!</p>
+        <button onclick="startSinglePlayer('Player 1')">Mulai Player 1</button>
+        <button onclick="location.reload()">Kembali</button>
+    </div>
+
+    <!-- Arena Bermain -->
+    <div id="game-container" class="hidden">
+        <div id="stats">
+            <div><span id="label-nama">-</span></div>
+            <div>Skor: <span id="label-skor">0</span></div>
+            <div>Nyawa: <span id="label-nyawa" class="heart">❤️❤️❤️</span></div>
+            <div>⏳ <span id="label-waktu">60</span>s</div>
+        </div>
+        
+        <div id="arena">
+            <div id="zombie" class="zombie">🧟</div>
+            <div class="player">🤠</div>
+        </div>
+
+        <div id="question-box">
+            <h3 id="question-text">Pertanyaan akan muncul di sini</h3>
+            <div class="options" id="options-container"></div>
+        </div>
+    </div>
+
+    <!-- Skor Akhir -->
+    <div id="result-screen" class="screen hidden">
+        <h2 id="result-title">Permainan Selesai!</h2>
+        <p id="result-msg"></p>
+        <p id="final-skor" style="font-size: 30px; font-weight: bold;"></p>
+        <button onclick="saveAndExit()">Simpan & Selesai</button>
+    </div>
+
+    <!-- Panel Guru -->
+    <div id="teacher-screen" class="screen hidden">
+        <h2>Data Nilai Siswa</h2>
+        <div id="score-list" style="background: white; color: black; padding: 10px; width: 90%; max-height: 300px; overflow-y: auto; text-align: left; border-radius: 10px;"></div>
+        <button onclick="clearScores()" style="background: #c0392b;">Hapus Semua Data</button>
+        <button onclick="location.reload()">Kembali</button>
+    </div>
+
+    <!-- Audio -->
+    <audio id="bgm" loop src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+
+    <script>
+        const questions = [
+            { q: "Pada bentuk 3a + 5b - 7, manakah yang merupakan konstanta?", a: "-7", o: ["3", "5", "-7", "a"] },
+            { q: "Berapa koefisien dari x pada bentuk 2x^2 - 4x + 8?", a: "-4", o: ["2", "-4", "8", "x"] },
+            { q: "Manakah suku yang sejenis dengan 2xy?", a: "5xy", o: ["2x", "2y", "5xy", "2x^2y"] },
+            { q: "Variabel dari bentuk aljabar 7p^2 - q adalah...", a: "p^2 dan q", o: ["p saja", "q saja", "p^2 dan q", "7"] },
+            { q: "Ada berapa suku pada bentuk 2x + 3y - 5z + 1?", a: "4 Suku", o: ["2 Suku", "3 Suku", "4 Suku", "5 Suku"] },
+            { q: "Suku sejenis dari 3a + 2b - a + 5 adalah...", a: "3a dan -a", o: ["3a dan 2b", "3a dan -a", "2b dan 5", "Semua sejenis"] },
+            { q: "Koefisien dari y^2 pada x^2 - y^2 + 5 adalah...", a: "-1", o: ["1", "0", "-1", "5"] },
+            { q: "Bentuk aljabar dari: '5 kg jeruk' jika jeruk adalah j.", a: "5j", o: ["j+5", "5j", "j^5", "5"] },
+            { q: "Pada $8m - 3km$, suku keduanya adalah...", a: "-3km", o: ["3km", "-3km", "8m", "km"] },
+            { q: "Suku yang tidak memiliki variabel disebut...", a: "Konstanta", o: ["Variabel", "Koefisien", "Konstanta", "Suku Sejenis"] }
+        ];
+
+        let currentQ = 0;
+        let score = 0;
+        let timeLeft = 60;
+        let lives = 3;
+        let timer;
+        let zombieTimer;
+        let zombiePos = 0;
+        let playerName = "";
+
+        function startSinglePlayer(battleName = "") {
+            const inputName = document.getElementById('player-name').value;
+            if (!inputName && !battleName) return alert("Masukkan nama dulu, Bu Guru perlu mendata nilaimu!");
+            
+            if (localStorage.getItem("done_" + inputName) && !battleName) {
+                return alert("Kamu sudah mengerjakan tugas ini!");
+            }
+
+            playerName = battleName || inputName;
+            document.getElementById('menu-screen').classList.add('hidden');
+            document.getElementById('battle-info').classList.add('hidden');
+            document.getElementById('game-container').classList.remove('hidden');
+            document.getElementById('label-nama').innerText = playerName;
+            document.getElementById('bgm').play();
+            
+            resetGameState();
+            loadQuestion();
+            startTimer();
+            moveZombie();
+        }
+
+        function resetGameState() {
+            currentQ = 0;
+            score = 0;
+            lives = 3;
+            timeLeft = 60;
+            zombiePos = 0;
+            updateHearts();
+        }
+
+        function updateHearts() {
+            let heartStr = "";
+            for(let i=0; i<lives; i++) heartStr += "❤️";
+            document.getElementById('label-nyawa').innerText = heartStr || "Mati";
+        }
+
+        function loadQuestion() {
+            if (currentQ >= questions.length) return endGame("Selamat! Kamu berhasil menjawab semua!");
+            const q = questions[currentQ];
+            document.getElementById('question-text').innerHTML = q.q.replace(/\$/g, "");
+            const container = document.getElementById('options-container');
+            container.innerHTML = "";
+            
+            let shuffled = [...q.o].sort(() => Math.random() - 0.5);
+            shuffled.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "option-btn";
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(opt);
+                container.appendChild(btn);
+            });
+            zombiePos = 0; 
+        }
+
+        function checkAnswer(ans) {
+            if (ans === questions[currentQ].a) {
+                score += 10;
+                currentQ++;
+                document.getElementById('label-skor').innerText = score;
+                zombiePos = 0;
+                loadQuestion();
+            } else {
+                lives--;
+                updateHearts();
+                if (lives <= 0) {
+                    endGame("Yah, Nyawa kamu habis!");
+                } else {
+                    alert("Jawaban Salah! Nyawa berkurang!");
+                    zombiePos += 10; // Penalti: zombie maju sedikit
+                }
+            }
+        }
+
+        function moveZombie() {
+            zombieTimer = setInterval(() => {
+                if (document.getElementById('game-container').classList.contains('hidden')) {
+                    clearInterval(zombieTimer);
+                    return;
+                }
+                
+                zombiePos += 0.15; // KECEPATAN DIPERLAMBAT (sebelumnya 0.5)
+                document.getElementById('zombie').style.left = zombiePos + "%";
+                
+                if (zombiePos > 85) {
+                    lives--;
+                    updateHearts();
+                    zombiePos = 0; // Reset zombie ke awal
+                    if (lives <= 0) {
+                        clearInterval(zombieTimer);
+                        endGame("Zombie berhasil menangkapmu!");
+                    } else {
+                        alert("Zombie mencapai pemain! Nyawa berkurang!");
+                    }
+                }
+            }, 100);
+        }
+
+        function startTimer() {
+            timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('label-waktu').innerText = timeLeft;
+                if (timeLeft <= 0) endGame("Waktu habis!");
+            }, 1000);
+        }
+
+        function endGame(msg) {
+            clearInterval(timer);
+            clearInterval(zombieTimer);
+            document.getElementById('game-container').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+            document.getElementById('result-msg').innerText = msg;
+            document.getElementById('final-skor').innerText = "Skor: " + score;
+            
+            let allScores = JSON.parse(localStorage.getItem("aljabar_scores") || "[]");
+            allScores.push({ name: playerName, score: score, date: new Date().toLocaleString() });
+            localStorage.setItem("aljabar_scores", JSON.stringify(allScores));
+            
+            // Tandai sudah mengerjakan (kecuali mode battle)
+            if(!playerName.includes("Player")) {
+                localStorage.setItem("done_" + playerName, true);
+            }
+        }
+
+        function saveAndExit() {
+            location.reload();
+        }
+
+        function startBattle() {
+            document.getElementById('menu-screen').classList.add('hidden');
+            document.getElementById('battle-info').classList.remove('hidden');
+        }
+
+        function showTeacherPanel() {
+            const pass = prompt("Masukkan Password Guru:");
+            if (pass === "ALFALAH") {
+                document.getElementById('menu-screen').classList.add('hidden');
+                document.getElementById('teacher-screen').classList.remove('hidden');
+                const list = document.getElementById('score-list');
+                const data = JSON.parse(localStorage.getItem("aljabar_scores") || "[]");
+                if(data.length === 0) {
+                    list.innerHTML = "<p style='text-align:center'>Belum ada data nilai.</p>";
+                } else {
+                    list.innerHTML = data.map(s => `<div style="border-bottom:1px solid #ccc; padding:5px;"><b>${s.name}</b>: Nilai ${s.score} <br><small>${s.date}</small></div>`).join("");
+                }
+            } else {
+                alert("Password Salah!");
+            }
+        }
+
+        function clearScores() {
+            if(confirm("Hapus semua data nilai siswa? Tindakan ini tidak bisa dibatalkan.")) {
+                localStorage.clear();
+                alert("Semua data telah dihapus.");
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>
