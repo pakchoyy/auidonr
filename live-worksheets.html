@@ -1,0 +1,287 @@
+<!doctype html>
+<html class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LKPD Bentuk Aljabar</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Nunito', sans-serif; }
+    .chip { transition: all 0.2s; cursor: pointer; user-select: none; }
+    .chip.selected { transform: scale(1.1); box-shadow: 0 0 0 3px #f59e0b; }
+    .correct-toast { animation: slideIn 0.3s ease-out; }
+    @keyframes slideIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
+    .section-card { border-left: 5px solid; }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full overflow-auto bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+  <div class="w-full min-h-full p-4 md:p-8"><!-- Header -->
+   <div class="max-w-3xl mx-auto mb-6">
+    <div class="bg-white rounded-2xl shadow-lg p-6 text-center border-t-4 border-indigo-500">
+     <div class="inline-flex items-center gap-2 bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-sm font-bold mb-2"><span>📐</span> Fase D - Matematika
+     </div>
+     <h1 id="main-title" class="text-2xl md:text-3xl font-extrabold text-gray-800 mb-1">LEMBAR KERJA PESERTA DIDIK</h1>
+     <p class="text-indigo-600 font-semibold text-lg">Mengenal Bentuk Aljabar (Part 1)</p>
+     <div class="mt-4 flex flex-col sm:flex-row gap-3 justify-center">
+      <div class="flex items-center gap-2"><label class="text-sm font-semibold text-gray-600">Nama:</label> <input type="text" id="student-name" class="border-b-2 border-gray-300 px-2 py-1 text-sm bg-transparent w-40" placeholder="Ketik namamu...">
+      </div>
+      <div class="flex items-center gap-2"><label class="text-sm font-semibold text-gray-600">Kelas:</label> <input type="text" id="student-class" class="border-b-2 border-gray-300 px-2 py-1 text-sm bg-transparent w-24" placeholder="Kelasmu...">
+      </div>
+     </div>
+    </div>
+   </div><!-- Section A -->
+   <div class="max-w-3xl mx-auto mb-6">
+    <div class="section-card border-l-amber-400 bg-white rounded-2xl shadow-md p-6">
+     <h2 class="text-xl font-extrabold text-amber-600 mb-1 flex items-center gap-2">🔍 A. Mari Mengamati!</h2>
+     <p class="text-gray-500 text-sm mb-5">Ubahlah cerita di bawah ini menjadi bentuk matematika (Aljabar)</p><!-- Soal 1 -->
+     <div class="bg-amber-50 rounded-xl p-4 mb-4">
+      <p class="text-gray-700 font-semibold mb-1">Soal 1:</p>
+      <p class="text-gray-600 text-sm mb-3">Budi memiliki beberapa kelereng di dalam kantong, lalu ia membeli lagi <strong>5 butir</strong> kelereng. Jika kelereng di kantong disimbolkan dengan <strong>x</strong>, bagaimana bentuk aljabarnya?</p>
+      <div class="flex items-center gap-2"><span class="text-sm font-bold text-gray-500">Jawab:</span> <input type="text" id="ans-a1" class="flex-1 border-2 border-amber-200 rounded-lg px-3 py-2 text-sm" placeholder="Ketik jawabanmu di sini..."> <button onclick="checkA1()" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition">Cek</button>
+      </div>
+      <div id="feedback-a1" class="mt-2 text-sm font-semibold hidden"></div>
+     </div><!-- Soal 2 -->
+     <div class="bg-amber-50 rounded-xl p-4">
+      <p class="text-gray-700 font-semibold mb-1">Soal 2:</p>
+      <p class="text-gray-600 text-sm mb-3">Ibu membeli <strong>4 kardus</strong> mi instan dan <strong>3 bungkus</strong> roti. Jika satu kardus mi adalah <strong>m</strong> dan satu bungkus roti adalah <strong>r</strong>, tuliskan bentuk aljabarnya!</p>
+      <div class="flex items-center gap-2"><span class="text-sm font-bold text-gray-500">Jawab:</span> <input type="text" id="ans-a2" class="flex-1 border-2 border-amber-200 rounded-lg px-3 py-2 text-sm" placeholder="Ketik jawabanmu di sini..."> <button onclick="checkA2()" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition">Cek</button>
+      </div>
+      <div id="feedback-a2" class="mt-2 text-sm font-semibold hidden"></div>
+     </div>
+    </div>
+   </div><!-- Section B -->
+   <div class="max-w-3xl mx-auto mb-6">
+    <div class="section-card border-l-blue-400 bg-white rounded-2xl shadow-md p-6">
+     <h2 class="text-xl font-extrabold text-blue-600 mb-1 flex items-center gap-2">📊 B. Analisis Bentuk Aljabar</h2>
+     <p class="text-gray-500 text-sm mb-2">Diberikan bentuk aljabar:</p>
+     <div class="bg-blue-100 rounded-xl p-4 mb-5 text-center"><span class="text-2xl font-extrabold text-blue-800">7x² − 4x + 12</span>
+     </div>
+     <p class="text-gray-500 text-sm mb-4">Lengkapilah tabel di bawah ini!</p>
+     <div class="overflow-x-auto">
+      <table class="w-full border-collapse">
+       <thead>
+        <tr class="bg-blue-500 text-white">
+         <th class="px-4 py-3 text-left rounded-tl-lg text-sm">Komponen</th>
+         <th class="px-4 py-3 text-left rounded-tr-lg text-sm">Jawabanmu</th>
+        </tr>
+       </thead>
+       <tbody>
+        <tr class="border-b border-blue-100">
+         <td class="px-4 py-3 text-sm font-semibold text-gray-700 bg-blue-50">Sebutkan suku-sukunya</td>
+         <td class="px-4 py-3"><input type="text" id="ans-b1" class="w-full border-2 border-blue-200 rounded-lg px-3 py-2 text-sm" placeholder="Pisahkan dengan koma..."></td>
+        </tr>
+        <tr class="border-b border-blue-100">
+         <td class="px-4 py-3 text-sm font-semibold text-gray-700 bg-blue-50">Sebutkan variabelnya</td>
+         <td class="px-4 py-3"><input type="text" id="ans-b2" class="w-full border-2 border-blue-200 rounded-lg px-3 py-2 text-sm" placeholder="Pisahkan dengan koma..."></td>
+        </tr>
+        <tr class="border-b border-blue-100">
+         <td class="px-4 py-3 text-sm font-semibold text-gray-700 bg-blue-50">Koefisien dari x</td>
+         <td class="px-4 py-3"><input type="text" id="ans-b3" class="w-full border-2 border-blue-200 rounded-lg px-3 py-2 text-sm" placeholder="Tulis angkanya..."></td>
+        </tr>
+        <tr>
+         <td class="px-4 py-3 text-sm font-semibold text-gray-700 bg-blue-50 rounded-bl-lg">Konstantanya</td>
+         <td class="px-4 py-3"><input type="text" id="ans-b4" class="w-full border-2 border-blue-200 rounded-lg px-3 py-2 text-sm" placeholder="Tulis angkanya..."></td>
+        </tr>
+       </tbody>
+      </table>
+     </div>
+     <div class="mt-4 text-right"><button onclick="checkB()" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg text-sm font-bold transition">Cek Jawaban</button>
+     </div>
+     <div id="feedback-b" class="mt-3 text-sm font-semibold hidden"></div>
+    </div>
+   </div><!-- Section C -->
+   <div class="max-w-3xl mx-auto mb-6">
+    <div class="section-card border-l-green-400 bg-white rounded-2xl shadow-md p-6">
+     <h2 class="text-xl font-extrabold text-green-600 mb-1 flex items-center gap-2">🎯 C. Menentukan Suku Sejenis</h2>
+     <p class="text-gray-500 text-sm mb-5">Klik/tap suku-suku yang <strong>sejenis</strong> pada setiap kelompok di bawah ini!</p><!-- Group 1 -->
+     <div class="bg-green-50 rounded-xl p-4 mb-4">
+      <p class="text-sm font-bold text-gray-600 mb-3">Kelompok 1: Pilih suku yang sejenis!</p>
+      <div class="flex flex-wrap gap-3" id="group1"><span class="chip bg-white border-2 border-green-300 rounded-full px-4 py-2 text-sm font-bold text-gray-700" data-term="3a" onclick="toggleChip(this,'group1')">3a</span> <span class="chip bg-white border-2 border-green-300 rounded-full px-4 py-2 text-sm font-bold text-gray-700" data-term="-2b" onclick="toggleChip(this,'group1')">−2b</span> <span class="chip bg-white border-2 border-green-300 rounded-full px-4 py-2 text-sm font-bold text-gray-700" data-term="5a" onclick="toggleChip(this,'group1')">5a</span> <span class="chip bg-white border-2 border-green-300 rounded-full px-4 py-2 text-sm font-bold text-gray-700" data-term="7ab" onclick="toggleChip(this,'group1')">7ab</span>
+      </div>
+      <div class="mt-2">
+       <button onclick="checkC(1)" class="text-green-600 text-sm font-bold hover:underline">Cek →</button>
+      </div>
+      <div id="feedback-c1" class="mt-1 text-sm font-semibold hidden"></div>
+     </div><!-- Group 2 -->
+     <div class="bg-green-50 rounded-xl p-4 mb-4">
+      <p class="text-sm font-bold text-gray-600 mb-3">Kelompok 2: Pilih suku yang sejenis!</p>
+      <div class="flex flex-wrap gap-3" id="group2"><span class="chip bg-white border-2 border-green-300 rounded-full px-4 py-2 text-sm font-bold text-gray-700" data-term="x2" onclick="toggleChip(this,'group2')">x²</span> <span class="chip bg-white border-2 border-green-300 rounded-full px-4 py-2 text-sm font-bold text-gray-700" data-term="3x" onclick="toggleChip(this,'group2')">3x</span> <span class="chip bg-white border-2 border-green-300 rounded-full px-4 py-2 text-sm font-bold text-gray-700" data-term="-5x2" onclick="toggleChip(this,'group2')">−5x²</span> <span class="chip bg-white border-2 border-green-300 rounded-full px-4 py-2 text-sm font-bold text-gray-700" data-term="8y" onclick="toggleChip(this,'group2')">8y</span>
+      </div>
+      <div class="mt-2">
+       <button onclick="checkC(2)" class="text-green-600 text-sm font-bold hover:underline">Cek →</button>
+      </div>
+      <div id="feedback-c2" class="mt-1 text-sm font-semibold hidden"></div>
+     </div><!-- Group 3 -->
+     <div class="bg-green-50 rounded-xl p-4">
+      <p class="text-sm font-bold text-gray-600 mb-3">Kelompok 3: Pilih suku yang sejenis!</p>
+      <div class="flex flex-wrap gap-3" id="group3"><span class="chip bg-white border-2 border-green-300 rounded-full px-4 py-2 text-sm font-bold text-gray-700" data-term="10pq" onclick="toggleChip(this,'group3')">10pq</span> <span class="chip bg-white border-2 border-green-300 rounded-full px-4 py-2 text-sm font-bold text-gray-700" data-term="2p" onclick="toggleChip(this,'group3')">2p</span> <span class="chip bg-white border-2 border-green-300 rounded-full px-4 py-2 text-sm font-bold text-gray-700" data-term="-4pq" onclick="toggleChip(this,'group3')">−4pq</span> <span class="chip bg-white border-2 border-green-300 rounded-full px-4 py-2 text-sm font-bold text-gray-700" data-term="p2" onclick="toggleChip(this,'group3')">p²</span>
+      </div>
+      <div class="mt-2">
+       <button onclick="checkC(3)" class="text-green-600 text-sm font-bold hover:underline">Cek →</button>
+      </div>
+      <div id="feedback-c3" class="mt-1 text-sm font-semibold hidden"></div>
+     </div>
+    </div>
+   </div><!-- Score -->
+   <div class="max-w-3xl mx-auto mb-8">
+    <div class="bg-white rounded-2xl shadow-md p-6 text-center">
+     <p class="text-gray-500 text-sm mb-2">Skor Kamu</p>
+     <div id="score-display" class="text-4xl font-extrabold text-indigo-600">
+      0 / 7
+     </div><button onclick="resetAll()" class="mt-4 bg-gray-200 hover:bg-gray-300 text-gray-700 px-5 py-2 rounded-lg text-sm font-bold transition">🔄 Ulangi Semua</button>
+    </div>
+   </div>
+  </div>
+  <script>
+  let score = 0;
+  let answered = { a1:false, a2:false, b:false, c1:false, c2:false, c3:false };
+
+  function normalize(s) { return s.replace(/\s+/g,'').toLowerCase().replace(/−/g,'-'); }
+
+  function showFeedback(id, correct, msg) {
+    const el = document.getElementById(id);
+    el.classList.remove('hidden');
+    el.className = el.className.replace(/hidden/,'');
+    if (correct) {
+      el.innerHTML = '✅ ' + msg;
+      el.style.color = '#16a34a';
+    } else {
+      el.innerHTML = '❌ ' + msg;
+      el.style.color = '#dc2626';
+    }
+    el.classList.add('correct-toast');
+  }
+
+  function updateScore() {
+    document.getElementById('score-display').textContent = score + ' / 7';
+  }
+
+  function checkA1() {
+    if (answered.a1) return;
+    const ans = normalize(document.getElementById('ans-a1').value);
+    const correct = ans === 'x+5' || ans === '5+x';
+    if (correct) { answered.a1 = true; score++; updateScore(); }
+    showFeedback('feedback-a1', correct, correct ? 'Benar! Bentuk aljabarnya adalah x + 5' : 'Coba lagi! Ingat, kelereng di kantong = x, ditambah 5 kelereng lagi.');
+  }
+
+  function checkA2() {
+    if (answered.a2) return;
+    const ans = normalize(document.getElementById('ans-a2').value);
+    const correct = ans === '4m+3r' || ans === '3r+4m';
+    if (correct) { answered.a2 = true; score++; updateScore(); }
+    showFeedback('feedback-a2', correct, correct ? 'Benar! Bentuk aljabarnya adalah 4m + 3r' : 'Coba lagi! 4 kardus mi = 4m, 3 bungkus roti = 3r.');
+  }
+
+  function checkB() {
+    if (answered.b) return;
+    const b1 = normalize(document.getElementById('ans-b1').value);
+    const b2 = normalize(document.getElementById('ans-b2').value);
+    const b3 = normalize(document.getElementById('ans-b3').value);
+    const b4 = normalize(document.getElementById('ans-b4').value);
+
+    let correct = 0;
+    let msgs = [];
+    // Suku-suku
+    const validSuku = ['7x2,-4x,12','7x^2,-4x,12','7x²,-4x,12'].map(normalize);
+    if (validSuku.some(v => b1.split(',').sort().join(',') === v.split(',').sort().join(','))) { correct++; } else { msgs.push('Suku-suku: 7x², −4x, 12'); }
+    // Variabel
+    if (b2 === 'x') { correct++; } else { msgs.push('Variabel: x'); }
+    // Koefisien
+    if (b3 === '-4' || b3 === '−4') { correct++; } else { msgs.push('Koefisien x: −4'); }
+    // Konstanta
+    if (b4 === '12') { correct++; } else { msgs.push('Konstanta: 12'); }
+
+    answered.b = true;
+    score += correct;
+    updateScore();
+    if (correct === 4) {
+      showFeedback('feedback-b', true, 'Sempurna! Semua jawaban benar! 🎉');
+    } else {
+      showFeedback('feedback-b', false, `${correct}/4 benar. Jawaban yang tepat: ${msgs.join(' | ')}`);
+    }
+  }
+
+  function toggleChip(el, groupId) {
+    el.classList.toggle('selected');
+  }
+
+  const answers = {
+    1: ['3a','5a'],
+    2: ['x2','-5x2'],
+    3: ['10pq','-4pq']
+  };
+
+  function checkC(group) {
+    const key = 'c'+group;
+    if (answered[key]) return;
+    const chips = document.querySelectorAll(`#group${group} .chip`);
+    const selected = [];
+    chips.forEach(c => { if (c.classList.contains('selected')) selected.push(c.dataset.term); });
+    const correct = JSON.stringify(selected.sort()) === JSON.stringify(answers[group].sort());
+    answered[key] = true;
+    if (correct) { score++; }
+    updateScore();
+    showFeedback(`feedback-c${group}`, correct, correct ? 'Benar! Kamu berhasil menemukan suku sejenis! 🎉' : `Belum tepat. Suku sejenis: ${answers[group].join(' dan ')}`);
+    chips.forEach(c => {
+      if (answers[group].includes(c.dataset.term)) {
+        c.style.borderColor = '#16a34a'; c.style.backgroundColor = '#dcfce7';
+      }
+    });
+  }
+
+  function resetAll() {
+    score = 0; updateScore();
+    Object.keys(answered).forEach(k => answered[k] = false);
+    document.querySelectorAll('input[type="text"]').forEach(i => { if(i.id.startsWith('ans')) i.value = ''; });
+    document.querySelectorAll('.chip').forEach(c => { c.classList.remove('selected'); c.style.borderColor=''; c.style.backgroundColor=''; });
+    ['feedback-a1','feedback-a2','feedback-b','feedback-c1','feedback-c2','feedback-c3'].forEach(id => {
+      document.getElementById(id).classList.add('hidden');
+    });
+  }
+
+  // Element SDK
+  const defaultConfig = {
+    worksheet_title: 'LEMBAR KERJA PESERTA DIDIK',
+    background_color: '#eef2ff',
+    surface_color: '#ffffff',
+    text_color: '#1f2937',
+    primary_action: '#6366f1',
+    secondary_action: '#f59e0b',
+    font_family: 'Nunito',
+    font_size: 16
+  };
+
+  window.elementSdk.init({
+    defaultConfig,
+    onConfigChange: async (config) => {
+      const title = config.worksheet_title || defaultConfig.worksheet_title;
+      document.getElementById('main-title').textContent = title;
+      document.body.style.fontFamily = `${config.font_family || defaultConfig.font_family}, sans-serif`;
+    },
+    mapToCapabilities: (config) => ({
+      recolorables: [
+        { get: () => config.background_color || defaultConfig.background_color, set: (v) => { config.background_color = v; window.elementSdk.setConfig({background_color:v}); }},
+        { get: () => config.surface_color || defaultConfig.surface_color, set: (v) => { config.surface_color = v; window.elementSdk.setConfig({surface_color:v}); }},
+        { get: () => config.text_color || defaultConfig.text_color, set: (v) => { config.text_color = v; window.elementSdk.setConfig({text_color:v}); }},
+        { get: () => config.primary_action || defaultConfig.primary_action, set: (v) => { config.primary_action = v; window.elementSdk.setConfig({primary_action:v}); }},
+        { get: () => config.secondary_action || defaultConfig.secondary_action, set: (v) => { config.secondary_action = v; window.elementSdk.setConfig({secondary_action:v}); }}
+      ],
+      borderables: [],
+      fontEditable: { get: () => config.font_family || defaultConfig.font_family, set: (v) => { config.font_family = v; window.elementSdk.setConfig({font_family:v}); }},
+      fontSizeable: { get: () => config.font_size || defaultConfig.font_size, set: (v) => { config.font_size = v; window.elementSdk.setConfig({font_size:v}); }}
+    }),
+    mapToEditPanelValues: (config) => new Map([
+      ['worksheet_title', config.worksheet_title || defaultConfig.worksheet_title]
+    ])
+  });
+
+  lucide.createIcons();
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9f5e2ab1b4ecfdf9',t:'MTc3Nzc5OTc4NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
